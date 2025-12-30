@@ -107,8 +107,15 @@ router.post('/send', async (req, res) => {
         };
 
         // Send email
+        const recipient = process.env.RECIPIENT_EMAIL || process.env.EMAIL_USER;
+        if (!recipient) {
+            throw new Error('No recipient email configured (RECIPIENT_EMAIL or EMAIL_USER)');
+        }
+
+        mailOptions.to = recipient;
+
         await transporter.sendMail(mailOptions);
-        console.log(`📧 Email sent successfully to: ${process.env.EMAIL_USER}`);
+        console.log(`📧 Email sent successfully to: ${recipient}`);
 
         // Update message status
         newMessage.status = 'sent';
